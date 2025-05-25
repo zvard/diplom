@@ -22,5 +22,5 @@
   },
   "include": [
     "src"
-  ]
+, "src/api-js/api.js", "src/api-js/home.js", "src/api-js/router.js", "src/api-js/search.js"  ]
 }

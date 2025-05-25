@@ -1,37 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music App</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="top-bar">
+        <div class="top-bar-content">
+            <h1 class="logo">last.fm</h1>
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Search for artists, tracks, albums" id="searchInput">
+                <button class="search-button" id="searchButton">Search</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="app-container">
+        <header class="app-header">
+            <nav class="main-nav">
+                <a href="#" class="nav-link" data-section="artists">Music</a>
+                <a href="#" class="nav-link" data-section="tracks">Charts</a>
+            </nav>
+        </header>
 
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <title>React App</title>
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
+        <main class="app-main">
+            <div class="loading-spinner" id="loadingSpinner" style="display: none;"></div>
+            <div class="error-message" id="errorMessage" style="display: none;"></div>
+            
+            <section class="artists-section" id="artistsSection">
+                <h2>Hot right now</h2>
+                <div class="artists-grid" id="artistsGrid"></div>
+            </section>
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
+            <section class="albums-section" id="albumsSection" style="display: none;">
+                <h2>Albums</h2>
+                <div class="albums-grid" id="albumsGrid"></div>
+            </section>
 
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
-  </body>
+            <section class="tracks-section" id="tracksSection">
+                <h2>Popular tracks</h2>
+                <div class="tracks-grid" id="tracksGrid"></div>
+            </section>
+        </main>
+    </div>
+
+    
+    
+    <div class="bottom-bar">
+    <footer class="app-footer">
+        <div class="footer-links">
+            <span>COMPANY</span>
+            <span>NEW</span>
+            <span>GOODIES</span>
+            <span>ACCOUNT</span>
+            <span>FOLLOW US</span>
+            <span>PASSAGE</span>
+        </div>
+    </footer>
+</div>
+
+    <script src="script.js"></script>
+</body>
 </html>
