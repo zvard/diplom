@@ -81,7 +81,16 @@ const UIController = (function() {
         artistsSectionTitle: document.querySelector('#artistsSection h2'),
         albumsSectionTitle: document.querySelector('#albumsSection h2'),
         tracksSectionTitle: document.querySelector('#tracksSection h2'),
+        logo: document.querySelector('.logo') // Add logo element
     };
+
+    function getImageUrl(item, size = 'extralarge') {
+        if (!item || !item.image || item.image.some(img => !img['#text'])) {
+            return '';
+        }
+        const sizedImage = item.image.find(img => img.size === size);
+        return sizedImage ? sizedImage['#text'] : item.image[item.image.length - 1]['#text'];
+    }
     
     function showLoading() {
         elements.loadingSpinner.style.display = 'block';
@@ -107,37 +116,39 @@ const UIController = (function() {
     }
     
     function renderArtists(artists) {
-        elements.artistsGrid.innerHTML = artists.map(artist => `
+        elements.artistsGrid.innerHTML = artists.map(artist => {
+            const imageUrl = getImageUrl(artist);
+            return `
             <div class="artist-card">
+                <img src="${imageUrl}" alt="${artist.name}" class="artist-image" onerror="this.style.background='#eee'; this.src='data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';">
                 <div class="artist-name">${artist.name}</div>
-                <div class="artist-genres">${artist.tags?.tag?.map(t => t.name).join(' - ') || ''}</div>
             </div>
-        `).join('');
+        `}).join('');
     }
 
     function renderAlbums(albums) {
-        const getImageUrl = (album) => {
-             const largeImage = album.image.find(img => img.size === 'extralarge');
-             return largeImage['#text'] || '';
-        };
-
-        elements.albumsGrid.innerHTML = albums.map(album => `
+        elements.albumsGrid.innerHTML = albums.map(album => {
+            const imageUrl = getImageUrl(album);
+            return `
             <div class="album-card">
-                <img src="${getImageUrl(album)}" alt="${album.name}" class="album-image" onerror="this.style.display='none'">
+                <img src="${imageUrl}" alt="${album.name}" class="album-image" onerror="this.style.background='#eee'; this.src='data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';">
                 <div class="album-name">${album.name}</div>
                 <div class="album-artist">${album.artist}</div>
             </div>
-        `).join('');
+        `}).join('');
     }
     
     function renderTracks(tracks) {
         elements.tracksGrid.innerHTML = tracks.map(track => {
+            const imageUrl = getImageUrl(track, 'large');
             const artistName = typeof track.artist === 'object' ? track.artist.name : track.artist;
             return `
             <div class="track-card">
-                <div class="track-title">${track.name}</div>
-                <div class="track-artist">${artistName || 'Unknown artist'}</div>
-                <div class="track-genres">${track.tags?.tag?.map(t => t.name).join(' - ') || ''}</div>
+                <img src="${imageUrl}" alt="${track.name}" class="track-image" onerror="this.style.background='#eee'; this.src='data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';">
+                <div class="track-info">
+                    <div class="track-title">${track.name}</div>
+                    <div class="track-artist">${artistName || 'Unknown artist'}</div>
+                </div>
             </div>
         `}).join('');
     }
@@ -180,7 +191,8 @@ const UIController = (function() {
  */
 const AppController = (function(LastFmClient, UIController) {
     const elements = UIController.getElements();
-    
+    let currentView = 'top'; // 'top' or 'search'
+
     async function init() {
         loadEventListeners();
         await loadTopContent();
@@ -206,6 +218,8 @@ const AppController = (function(LastFmClient, UIController) {
 
             elements.artistsSection.style.display = artists.length > 0 ? 'block' : 'none';
             elements.tracksSection.style.display = tracks.length > 0 ? 'block' : 'none';
+            elements.albumsSection.style.display = 'none';
+            currentView = 'top';
 
         } catch (error) {
             console.error('Error loading top content:', error);
@@ -247,6 +261,8 @@ const AppController = (function(LastFmClient, UIController) {
             elements.albumsSection.style.display = albums.length > 0 ? 'block' : 'none';
             elements.tracksSection.style.display = tracks.length > 0 ? 'block' : 'none';
 
+            currentView = 'search';
+
         } catch (error) {
             console.error('Error searching:', error);
             UIController.showError('Search failed. Please check your connection and try again.');
@@ -260,6 +276,12 @@ const AppController = (function(LastFmClient, UIController) {
         elements.searchInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 handleSearch();
+            }
+        });
+        elements.logo.addEventListener('click', (e) => { // Add event listener for the logo
+            e.preventDefault(); // Prevent default link behavior
+            if (currentView === 'search') {
+                loadTopContent();
             }
         });
     }
